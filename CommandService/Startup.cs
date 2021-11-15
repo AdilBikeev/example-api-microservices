@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using CommandService.AsyncDataService;
 using CommandService.Data;
 using CommandService.EventProcessing;
+using CommandService.SyncDataService.Grpc;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -39,6 +40,8 @@ namespace CommandService
             services.AddHostedService<MessageBusSubscriber>();
             
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
+            services.AddScoped<IPlatformDataClient, PlatformDataClient>();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "CommandService", Version = "v1" });
@@ -65,6 +68,8 @@ namespace CommandService
             {
                 endpoints.MapControllers();
             });
+
+            PreDb.PrepPopulation(app);
         }
     }
 }
